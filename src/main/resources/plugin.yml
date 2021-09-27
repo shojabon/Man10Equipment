@@ -1,0 +1,7 @@
+name: Man10Equipment
+version: '${version}'
+main: com.shojabon.man10equipment.Man10Equipment
+api-version: 1.17
+authors: [ Sho0 ]
+commands:
+  mequip:
