@@ -34,7 +34,7 @@ class ToggleEquipmentTypeCommand(private val plugin: Man10Equipment) : CommandEx
             types.add(type)
         }
         if(types.contains(args[2])){
-            p.sendMessage("§c§lこのタイプはすでに追加されています")
+            p.sendMessage(Man10Equipment.prefix + "§c§lこのタイプはすでに追加されています")
             return false
         }
         types.add(args[2])
@@ -46,7 +46,7 @@ class ToggleEquipmentTypeCommand(private val plugin: Man10Equipment) : CommandEx
         }
         sItem.setCustomData(plugin, "types", result.substring(0,result.length-1))
         p.inventory.setItemInMainHand(sItem.build())
-        p.sendMessage("§a§lタイプを追加しました")
+        p.sendMessage(Man10Equipment.prefix + "§a§lタイプを追加しました")
         return false
     }
 }

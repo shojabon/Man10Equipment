@@ -14,7 +14,7 @@ class ReloadCommand(private val plugin: Man10Equipment) : CommandExecutor {
         plugin.reloadConfig()
         Man10Equipment.api.stopAllTasks()
         Man10Equipment.config = plugin.config
-        Man10Equipment.mysql = ThreadedMySQLAPI(plugin)
+        Man10Equipment.disabledWorlds = Man10Equipment.config.getStringList("effectDisabledWorlds")
         Man10Equipment.api = Man10EquipmentAPI(plugin)
         Man10Equipment.prefix = plugin.config.getString("prefix")
         for(player in Bukkit.getOnlinePlayers()){

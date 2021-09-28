@@ -4,9 +4,9 @@ effects:
       - GENERIC_ARMOR 10.0
     commands:
       0:
-        - "tell <name> セット効果が発動した"
+        - "tell {name} セット効果が発動した"
       60:
         - "region effect"
     potions:
       60:
-        - 3 2 ABSORPTION
+        - 80 2 ABSORPTION

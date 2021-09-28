@@ -7,12 +7,13 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 class TestCommand(private val plugin: Man10Equipment) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        val test = Man10Equipment.api.getEquipment("test") ?: return false
-        test.playersWithEquipment[(sender as Player).uniqueId] = 1
+        val p = sender as Player
+        Bukkit.broadcastMessage(Man10Equipment.api.getEquipment("test")!!.playersWithEquipment.get(p.uniqueId).toString())
         return false
     }
 }

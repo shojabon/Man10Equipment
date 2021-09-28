@@ -3,18 +3,24 @@ package com.shojabon.man10equipment.dataclass
 import com.shojabon.man10equipment.Man10Equipment
 import com.shojabon.man10equipment.Man10EquipmentAPI
 import com.shojabon.mcutils.Utils.BaseUtils
+import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitTask
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class Man10EquipmentObject (val config: YamlConfiguration){
+    val plugin = Bukkit.getPluginManager().getPlugin("Man10Equipment")
 
     val settings = HashMap<Int, Man10EquipmentSetting>()
     val playersWithEquipment = HashMap<UUID, Int>()
+
+    val tasks = ArrayList<BukkitTask>()
 
     init {
         //load config
@@ -77,17 +83,11 @@ class Man10EquipmentObject (val config: YamlConfiguration){
 
             settings[Integer.parseInt(amountOfEquipment)] = setting
 
-            //initiate task
-            settings[Integer.parseInt(amountOfEquipment)]?.createAllTasks()
-
         }
 
-    }
+        //initiate tasks
+        createAllTasks()
 
-    fun stopAllTasks(){
-        for(setting in settings.values){
-            setting.stopAllTasks()
-        }
     }
 
     fun addUser(player: Player, amountOfEquipment: Int){
@@ -110,6 +110,40 @@ class Man10EquipmentObject (val config: YamlConfiguration){
         }
         playersWithEquipment.remove(player.uniqueId)
         Man10EquipmentAPI.resetPlayerAttributes(player)
+    }
+
+    //tasks
+
+    private fun getAllTaskIds(): ArrayList<Int> {
+        val result = ArrayList<Int>()
+        for(setting in settings.values){
+            for(id in setting.getTaskIds()){
+                if(!result.contains(id)) result.add(id)
+            }
+        }
+        return result
+    }
+
+    private fun createAllTasks(){
+        if(plugin == null)return
+        val ids = getAllTaskIds()
+        for(id in ids){
+            if(id == 0) continue
+            tasks.add(Bukkit.getScheduler().runTaskTimer(plugin, Runnable { executeEquipmentEffectTask(id) }, 0L, id.toLong()))
+        }
+    }
+
+    fun stopAllTasks(){
+        for(task in tasks){
+            task.cancel()
+        }
+    }
+
+    private fun executeEquipmentEffectTask(taskId: Int){
+        for(uuid in playersWithEquipment.keys){
+            val setting = settings[playersWithEquipment[uuid]]?: continue
+            setting.executeCommandAndPotion(uuid, taskId.toLong())
+        }
     }
 
 

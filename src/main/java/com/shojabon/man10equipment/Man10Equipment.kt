@@ -19,8 +19,11 @@ class Man10Equipment : JavaPlugin(), Listener {
         lateinit var mysql : ThreadedMySQLAPI
         lateinit var config : FileConfiguration
         lateinit var api: Man10EquipmentAPI
-        var prefix : String? = "§6[§6Man10Lock§6]"
+        var prefix : String? = "§6[§8Man10Equipment§6]"
         var serverName: String? = ""
+
+
+        lateinit var disabledWorlds: MutableList<String>
 
 
     }
@@ -30,7 +33,7 @@ class Man10Equipment : JavaPlugin(), Listener {
 
         saveDefaultConfig()
         Man10Equipment.config = config
-        mysql = ThreadedMySQLAPI(this)
+        disabledWorlds = Companion.config.getStringList("effectDisabledWorlds")
         prefix = config.getString("prefix")
         serverName = config.getString("server")
 

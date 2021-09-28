@@ -34,7 +34,7 @@ class RemoveEquipmentTypeCommand(private val plugin: Man10Equipment) : CommandEx
             types.add(type)
         }
         if(!types.contains(args[2])){
-            p.sendMessage("§c§lこのタイプはすでにありません")
+            p.sendMessage(Man10Equipment.prefix + "§c§lこのタイプはすでにありません")
             return false
         }
         types.remove(args[2])
@@ -44,9 +44,13 @@ class RemoveEquipmentTypeCommand(private val plugin: Man10Equipment) : CommandEx
             if(type == "") continue
             result += "$type|"
         }
-        sItem.setCustomData(plugin, "types", result.substring(0,result.length-1))
+        if(result.isEmpty()){
+            sItem.removeCustomData(plugin, "types")
+        }else{
+            sItem.setCustomData(plugin, "types", result.substring(0,result.length-1))
+        }
         p.inventory.setItemInMainHand(sItem.build())
-        p.sendMessage("§a§lタイプを消去しました")
+        p.sendMessage(Man10Equipment.prefix + "§a§lタイプを消去しました")
         return false
     }
 }

@@ -73,6 +73,15 @@ class Man10EquipmentCommandRouter (private val plugin: Man10Equipment): SCommand
 
         addCommand(
             SCommandObject()
+                .addArgument(SCommandArgument().addAllowedString("toggleWorld"))
+                .addArgument(SCommandArgument().addAlias("ワールド名"))
+                .addRequiredPermission("man10equipment.toggleWorld")
+                .addExplanation("有効化ワールドを設定する").setExecutor(ToggleEnableWorldCommand(plugin))
+        )
+
+
+        addCommand(
+            SCommandObject()
                 .addArgument(SCommandArgument().addAllowedString("test"))
                 .addRequiredPermission("man10equipment.test")
                 .addExplanation("テストコマンド").setExecutor(TestCommand(plugin))
