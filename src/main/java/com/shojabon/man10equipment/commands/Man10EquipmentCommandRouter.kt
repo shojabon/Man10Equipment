@@ -3,6 +3,7 @@ package com.shojabon.man10lock.commands
 import com.shojabon.man10equipment.Man10Equipment
 import com.shojabon.man10equipment.commands.subCommands.*
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandArgument
+import com.shojabon.mcutils.Utils.SCommandRouter.SCommandArgumentType
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandObject
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandRouter
 
@@ -79,13 +80,29 @@ class Man10EquipmentCommandRouter (private val plugin: Man10Equipment): SCommand
                 .addExplanation("有効化ワールドを設定する").setExecutor(ToggleEnableWorldCommand(plugin))
         )
 
+        addCommand(
+            SCommandObject()
+                .addArgument(SCommandArgument().addAllowedString("durability"))
+                .addArgument(SCommandArgument().addAllowedString("set"))
+                .addArgument(SCommandArgument().addAllowedType(SCommandArgumentType.INT))
+                .addRequiredPermission("man10equipment.durability.set")
+                .addExplanation("アイテムに特殊耐久値を設定する").setExecutor(SetDurabilityCommand(plugin))
+        )
 
         addCommand(
             SCommandObject()
-                .addArgument(SCommandArgument().addAllowedString("test"))
-                .addRequiredPermission("man10equipment.test")
-                .addExplanation("テストコマンド").setExecutor(TestCommand(plugin))
+                .addArgument(SCommandArgument().addAllowedString("durability"))
+                .addArgument(SCommandArgument().addAllowedString("setDefault"))
+                .addArgument(SCommandArgument().addAllowedType(SCommandArgumentType.INT))
+                .addRequiredPermission("man10equipment.durability.setDefault")
+                .addExplanation("アイテムにデフォルト特殊耐久値を設定する").setExecutor(setDefaultDurabilityCommand(plugin))
         )
+//        addCommand(
+//            SCommandObject()
+//                .addArgument(SCommandArgument().addAllowedString("test"))
+//                .addRequiredPermission("man10equipment.test")
+//                .addExplanation("テストコマンド").setExecutor(TestCommand(plugin))
+//        )
 
 
     }

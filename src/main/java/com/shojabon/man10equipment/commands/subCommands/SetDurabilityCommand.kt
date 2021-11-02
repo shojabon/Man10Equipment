@@ -10,8 +10,9 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.io.File
+import kotlin.math.roundToInt
 
-class ToggleEquipableItemCommand(private val plugin: Man10Equipment) : CommandExecutor {
+class SetDurabilityCommand(private val plugin: Man10Equipment) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if(sender !is Player){
@@ -27,25 +28,23 @@ class ToggleEquipableItemCommand(private val plugin: Man10Equipment) : CommandEx
 
         val sItem = SItemStack(p.inventory.itemInMainHand)
 
-        var currentTypeString = sItem.getCustomData(plugin, "equipable")
-        if(currentTypeString == null) currentTypeString = "false"
-
-        var currentItemIsHelmet = currentTypeString.equals("true")
-
-        currentItemIsHelmet = !currentItemIsHelmet
-
-
-        if(currentItemIsHelmet){
-            sItem.setCustomData(plugin, "equipable", currentItemIsHelmet.toString())
-        }else{
-            sItem.removeCustomData(plugin, "equipable")
+        if(sItem.getCustomData(plugin,"defaultDurability") == null){
+            p.sendMessage(Man10Equipment.prefix + "§c§lすデフォルト耐久値が設定されていません")
+            return false
         }
+
+        if(args[2] == "0"){
+            p.sendMessage(Man10Equipment.prefix + "§c§l耐久値をリセットしました")
+            sItem.removeCustomData(plugin, "durability")
+            p.inventory.setItemInMainHand(sItem.build())
+            return true
+        }
+
+
+        sItem.setCustomData(plugin, "durability", args[2].toInt().toString())
+        sItem.damage = sItem.maxDamage - ((args[2].toDouble()/sItem.getCustomData(plugin,"defaultDurability").toDouble()) * sItem.maxDamage.toDouble()).roundToInt()
         p.inventory.setItemInMainHand(sItem.build())
-        if(currentItemIsHelmet){
-            p.sendMessage(Man10Equipment.prefix + "§a§lアイテムを装備化しました")
-        }else{
-            p.sendMessage(Man10Equipment.prefix + "§c§lアイテムの装備化を解除しました")
-        }
+        p.sendMessage(Man10Equipment.prefix + "§a§lアイテムの耐久値を" + args[2] + "に設定しました")
         return false
     }
 }
