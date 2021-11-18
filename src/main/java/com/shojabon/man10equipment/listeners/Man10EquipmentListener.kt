@@ -73,6 +73,9 @@ class Man10EquipmentListener(val plugin: Man10Equipment) : Listener {
             sItem.setCustomData(plugin, "durability", remaining.toString())
 
             sItem.damage = sItem.maxDamage - ((remaining/default) * sItem.maxDamage.toDouble()).roundToInt()
+            val lore = sItem.lore
+            lore[lore.size-1] = "§c耐久力:${remaining.toInt()}/${default.toInt()}"
+            sItem.lore = lore
             contents[i] = sItem.build()
         }
         p.inventory.setArmorContents(contents)

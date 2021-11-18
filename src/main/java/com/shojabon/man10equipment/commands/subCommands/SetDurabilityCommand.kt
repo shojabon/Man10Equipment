@@ -36,6 +36,9 @@ class SetDurabilityCommand(private val plugin: Man10Equipment) : CommandExecutor
         if(args[2] == "0"){
             p.sendMessage(Man10Equipment.prefix + "§c§l耐久値をリセットしました")
             sItem.removeCustomData(plugin, "durability")
+            val lore = sItem.lore
+            lore[lore.size-1] = ""
+            sItem.lore = lore
             p.inventory.setItemInMainHand(sItem.build())
             return true
         }
@@ -43,6 +46,12 @@ class SetDurabilityCommand(private val plugin: Man10Equipment) : CommandExecutor
 
         sItem.setCustomData(plugin, "durability", args[2].toInt().toString())
         sItem.damage = sItem.maxDamage - ((args[2].toDouble()/sItem.getCustomData(plugin,"defaultDurability").toDouble()) * sItem.maxDamage.toDouble()).roundToInt()
+
+        val lore = sItem.lore
+        lore[lore.size-1] = "§c耐久力:${args[2].toInt()}/${args[2].toInt()}"
+        sItem.lore = lore
+        p.inventory.setItemInMainHand(sItem.build())
+
         p.inventory.setItemInMainHand(sItem.build())
         p.sendMessage(Man10Equipment.prefix + "§a§lアイテムの耐久値を" + args[2] + "に設定しました")
         return false
