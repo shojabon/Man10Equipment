@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
+import org.bukkit.inventory.ItemStack
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -58,7 +59,7 @@ class Man10EquipmentListener(val plugin: Man10Equipment) : Listener {
     fun durabilityListener(e: EntityDamageByEntityEvent){
         if(e.entity !is Player) return
         val p = e.entity as Player
-        val contents = p.inventory.armorContents;
+        val contents = p.inventory.armorContents.clone()
         for(i in contents.indices){
             val item = contents[i] ?: continue
             val sItem = SItemStack(item)
@@ -76,7 +77,11 @@ class Man10EquipmentListener(val plugin: Man10Equipment) : Listener {
             val lore = sItem.lore
             lore[lore.size-1] = "§c耐久力:${remaining.toInt()}/${default.toInt()}"
             sItem.lore = lore
-            contents[i] = sItem.build()
+            if(remaining.toInt() > 0) {
+                contents[i] = sItem.build()
+            }else{
+                contents[i] = ItemStack(Material.AIR)
+            }
         }
         p.inventory.setArmorContents(contents)
     }
