@@ -5,3 +5,4 @@ api-version: 1.17
 authors: [ Sho0 ]
 commands:
   mequip:
+  mhat:

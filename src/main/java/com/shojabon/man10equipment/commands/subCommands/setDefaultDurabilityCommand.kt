@@ -36,6 +36,7 @@ class setDefaultDurabilityCommand(private val plugin: Man10Equipment) : CommandE
             p.sendMessage(Man10Equipment.prefix + "§c§l耐久値をリセットしました")
             sItem.removeCustomData(plugin, "defaultDurability").removeCustomData(plugin, "durability")
             val lore = sItem.lore
+            if(lore.size == 0) lore.add("")
             lore[lore.size-1] = ""
             sItem.lore = lore
             p.inventory.setItemInMainHand(sItem.build())
@@ -47,6 +48,7 @@ class setDefaultDurabilityCommand(private val plugin: Man10Equipment) : CommandE
         sItem.damage = 0
 
         val lore = sItem.lore
+        if(lore.size == 0) lore.add("")
         lore[lore.size-1] = "§c耐久力:${args[2].toInt()}/${args[2].toInt()}"
         sItem.lore = lore
         p.inventory.setItemInMainHand(sItem.build())

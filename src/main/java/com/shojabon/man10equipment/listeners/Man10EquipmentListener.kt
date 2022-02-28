@@ -8,6 +8,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -55,9 +56,10 @@ class Man10EquipmentListener(val plugin: Man10Equipment) : Listener {
         e.whoClicked.inventory.setArmorContents(armorContent)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun durabilityListener(e: EntityDamageByEntityEvent){
         if(e.entity !is Player) return
+        if(e.isCancelled) return
         val p = e.entity as Player
         val contents = p.inventory.armorContents.clone()
         for(i in contents.indices){

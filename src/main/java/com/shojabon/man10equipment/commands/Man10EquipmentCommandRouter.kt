@@ -90,12 +90,21 @@ class Man10EquipmentCommandRouter (private val plugin: Man10Equipment): SCommand
         )
 
         addCommand(
-            SCommandObject()
-                .addArgument(SCommandArgument().addAllowedString("durability"))
-                .addArgument(SCommandArgument().addAllowedString("setDefault"))
-                .addArgument(SCommandArgument().addAllowedType(SCommandArgumentType.INT))
-                .addRequiredPermission("man10equipment.durability.setDefault")
-                .addExplanation("アイテムにデフォルト特殊耐久値を設定する").setExecutor(setDefaultDurabilityCommand(plugin))
+                SCommandObject()
+                        .addArgument(SCommandArgument().addAllowedString("durability"))
+                        .addArgument(SCommandArgument().addAllowedString("setDefault"))
+                        .addArgument(SCommandArgument().addAllowedType(SCommandArgumentType.INT))
+                        .addRequiredPermission("man10equipment.durability.setDefault")
+                        .addExplanation("アイテムにデフォルト特殊耐久値を設定する").setExecutor(setDefaultDurabilityCommand(plugin))
+        )
+
+        addCommand(
+                SCommandObject()
+                        .addArgument(SCommandArgument().addAllowedString("durability"))
+                        .addArgument(SCommandArgument().addAllowedString("repair"))
+                        .addArgument(SCommandArgument().addAllowedType(SCommandArgumentType.ONLINE_PLAYER))
+                        .addRequiredPermission("man10equipment.durability.repair")
+                        .addExplanation("装備してるアイテムを全回復する").setExecutor(RepairAllDurabilityCommand(plugin))
         )
 //        addCommand(
 //            SCommandObject()

@@ -6,10 +6,15 @@ import com.shojabon.man10lock.commands.Man10EquipmentCommandRouter
 import com.shojabon.mcutils.Utils.MySQL.ThreadedMySQLAPI
 import com.shojabon.mcutils.Utils.SItemStack
 import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerToggleSneakEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 class Man10Equipment : JavaPlugin(), Listener {
@@ -43,6 +48,7 @@ class Man10Equipment : JavaPlugin(), Listener {
         commandRouter.pluginPrefix = prefix
         getCommand("mequip")?.setExecutor(commandRouter)
         getCommand("mequip")?.tabCompleter = commandRouter
+        getCommand("mhat")?.setExecutor(this)
 
         server.pluginManager.registerEvents(Man10EquipmentListener(this), this)
 
@@ -57,6 +63,26 @@ class Man10Equipment : JavaPlugin(), Listener {
         for(player in Bukkit.getOnlinePlayers()){
             api.clearUserEquipmentCache(player)
         }
+    }
+
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+        if(!command.name.contentEquals("mhat")){
+            return false
+        }
+        if(!sender.hasPermission("mhat.use")){
+            sender.sendMessage("§e§l[§d§lm§a§lhat§e§l]§4権限が不足してます")
+            return false
+        }
+        val p: Player  = sender as Player
+        val item = p.inventory.itemInMainHand
+        if(item.type == Material.AIR){
+            return false
+        }
+        val helmet = p.inventory.helmet
+        p.inventory.helmet = item
+        p.inventory.setItemInMainHand(helmet)
+        p.sendMessage("§e§l[§d§lm§a§lhat§e§l]§d頭にかぶりました")
+        return true
     }
 
 }
