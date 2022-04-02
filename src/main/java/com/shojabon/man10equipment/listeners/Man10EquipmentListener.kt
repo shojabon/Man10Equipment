@@ -2,6 +2,7 @@ package com.shojabon.man10equipment.listeners
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import com.shojabon.man10equipment.Man10Equipment
+import com.shojabon.man10equipment.Man10EquipmentAPI
 import com.shojabon.mcutils.Utils.BaseUtils
 import com.shojabon.mcutils.Utils.SItemStack
 import org.bukkit.Bukkit
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
@@ -26,6 +28,11 @@ class Man10EquipmentListener(val plugin: Man10Equipment) : Listener {
     fun armorEquipEvent(e: PlayerArmorChangeEvent){
         Man10Equipment.api.clearUserEquipmentCache(e.player)
         Man10Equipment.api.addUserEquipmentCache(e.player)
+    }
+
+    @EventHandler
+    fun onWorldChange(e: PlayerChangedWorldEvent){
+        Man10EquipmentAPI.playerLocationCache[e.player.uniqueId] = e.player.location
     }
 
     @EventHandler

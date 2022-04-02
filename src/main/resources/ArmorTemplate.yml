@@ -10,3 +10,7 @@ effects:
     potions:
       60:
         - 80 2 ABSORPTION
+enabledWorlds:
+  - test
+disabledWorlds:
+  - test2

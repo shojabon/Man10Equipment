@@ -3,6 +3,7 @@ package com.shojabon.man10equipment.dataclass
 import com.shojabon.man10equipment.Man10Equipment
 import com.shojabon.man10equipment.Man10EquipmentAPI
 import com.shojabon.mcutils.Utils.BaseUtils
+import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.configuration.file.YamlConfiguration
@@ -20,6 +21,9 @@ class Man10EquipmentObject (val config: YamlConfiguration){
     val settings = HashMap<Int, Man10EquipmentSetting>()
     val playersWithEquipment = HashMap<UUID, Int>()
 
+    var enabledWorld = ArrayList<String>()
+    var disabledWorld = ArrayList<String>()
+
     val tasks = ArrayList<BukkitTask>()
 
     init {
@@ -32,6 +36,23 @@ class Man10EquipmentObject (val config: YamlConfiguration){
     }
 
     private fun loadConfig(){
+        loadEffects()
+        loadEnabledDisabledWorld()
+        //initiate tasks
+        createAllTasks()
+
+    }
+
+    private fun loadEnabledDisabledWorld(){
+        if(config.contains("enabledWorlds")){
+            this.enabledWorld = config.getStringList("enabledWorlds") as ArrayList<String>
+        }
+        if(config.contains("disabledWorlds")){
+            this.disabledWorld = config.getStringList("disabledWorlds") as ArrayList<String>
+        }
+    }
+
+    private fun loadEffects(){
         if(!config.contains("effects")) return
 
         for(amountOfEquipment in config.getConfigurationSection("effects")?.getKeys(false)!!){
@@ -84,10 +105,6 @@ class Man10EquipmentObject (val config: YamlConfiguration){
             settings[Integer.parseInt(amountOfEquipment)] = setting
 
         }
-
-        //initiate tasks
-        createAllTasks()
-
     }
 
     fun addUser(player: Player, amountOfEquipment: Int){
@@ -112,6 +129,16 @@ class Man10EquipmentObject (val config: YamlConfiguration){
         Man10EquipmentAPI.resetPlayerAttributes(player)
     }
 
+    private fun allowedToUseInWorld(world: String): Boolean {
+        if(enabledWorld.size != 0){
+            return enabledWorld.contains(world)
+        }
+        if(disabledWorld.size != 0){
+            return !disabledWorld.contains(world)
+        }
+        return true
+    }
+
     //tasks
 
     private fun getAllTaskIds(): ArrayList<Int> {
@@ -126,6 +153,7 @@ class Man10EquipmentObject (val config: YamlConfiguration){
 
     private fun createAllTasks(){
         if(plugin == null)return
+        tasks.add(Bukkit.getScheduler().runTaskTimer(plugin, Runnable { freezePlayerTask() }, 0L, 8))
         val ids = getAllTaskIds()
         for(id in ids){
             if(id == 0) continue
@@ -143,6 +171,20 @@ class Man10EquipmentObject (val config: YamlConfiguration){
         for(uuid in playersWithEquipment.keys){
             val setting = settings[playersWithEquipment[uuid]]?: continue
             setting.executeCommandAndPotion(uuid, taskId.toLong())
+        }
+    }
+
+    private fun freezePlayerTask(){
+        for(uuid in playersWithEquipment.keys){
+            val p = Bukkit.getPlayer(uuid) ?: continue
+            if(!p.isOnline) continue
+            if(allowedToUseInWorld(p.world.name)) continue
+            val loc = Man10EquipmentAPI.playerLocationCache[uuid] ?: continue
+            p.teleport(loc)
+            p.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 3, 10))
+            p.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 3, 10))
+            p.sendTitle("§c§l使用禁止アーマーを使用しています", "§c§l脱いでください")
+
         }
     }
 

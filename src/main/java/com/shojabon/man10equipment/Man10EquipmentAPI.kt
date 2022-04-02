@@ -4,6 +4,7 @@ import com.shojabon.man10equipment.dataclass.Man10EquipmentObject
 import com.shojabon.mcutils.Utils.SConfigFile
 import com.shojabon.mcutils.Utils.SItemStack
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import java.io.File
@@ -14,6 +15,7 @@ class Man10EquipmentAPI (val plugin: Man10Equipment){
 
     companion object{
         var equipmentTypes = HashMap<String, Man10EquipmentObject>()
+        val playerLocationCache = HashMap<UUID, Location>()
 
         fun resetPlayerAttributes(player: Player){
             for(attribute in Attribute.values()){
@@ -45,7 +47,7 @@ class Man10EquipmentAPI (val plugin: Man10Equipment){
     }
 
     fun getEquipment(name: String): Man10EquipmentObject? {
-        if(!equipmentTypes.containsKey(name)) return null;
+        if(!equipmentTypes.containsKey(name)) return null
         return equipmentTypes[name]
     }
 
@@ -79,6 +81,7 @@ class Man10EquipmentAPI (val plugin: Man10Equipment){
             }
         }
         clearUserEquipmentCache(player)
+        playerLocationCache[player.uniqueId] = player.location
         for(type in resultMap.keys){
             addUserEquipmentCache(player, type, resultMap[type]!!)
         }
